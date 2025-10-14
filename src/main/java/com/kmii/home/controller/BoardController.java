@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,5 +70,25 @@ public class BoardController {
 			return ResponseEntity.status(404).body("해당 게시글 존재하지 않음");
 		}
 	}
+	
+	//특정 id 글 삭제
+	@DeleteMapping("/{id}") 
+	public ResponseEntity<?> deletePost(@PathVariable("id") Long id, Authentication auth){
+		
+		Optional<Board> _board = boardRepository.findById(id);
+		
+		if(auth == null || !auth.getName().equals(_board.get().getAuthor().getUsername())) { //auth.getName:현재 로그인한 id
+			return ResponseEntity.status(403).body("해당 게시글에 대한 삭제 권한이 없습니다.");
+		}
+		
+		if(_board.isPresent()) {
+			boardRepository.delete(_board.get());
+			return ResponseEntity.ok("삭제 완료");
+		}else {
+			return ResponseEntity.status(404).body("해당 게시글 존재하지 않음");
+		}
+		
+	}
+	
 
 }
