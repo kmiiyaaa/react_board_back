@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,16 +78,44 @@ public class BoardController {
 		
 		Optional<Board> _board = boardRepository.findById(id);
 		
+		//삭제할 글의 존재 여부 확인
+		if(_board.isPresent()) {
+			return ResponseEntity.status(404).body("해당 게시글은 존재하지 않아 삭제 실패");	
+		}
+		
+		//로그인한 유저의 삭제 권한 확인
 		if(auth == null || !auth.getName().equals(_board.get().getAuthor().getUsername())) { //auth.getName:현재 로그인한 id
 			return ResponseEntity.status(403).body("해당 게시글에 대한 삭제 권한이 없습니다.");
 		}
-		
-		if(_board.isPresent()) {
 			boardRepository.delete(_board.get());
-			return ResponseEntity.ok("삭제 완료");
-		}else {
-			return ResponseEntity.status(404).body("해당 게시글 존재하지 않음");
+			return ResponseEntity.ok("삭제 완료");	
 		}
+	
+	//게시글 수정(권한 설정 -> 로그인 후 본인 작성글만 수정 가능)
+	@PutMapping("/{id}")
+	public ResponseEntity<?> updatePost(
+			@PathVariable("id") Long id, 
+			@RequestBody Board updateBoard, 
+			Authentication auth) {
+		
+		Optional<Board> _board = boardRepository.findById(id);
+		
+		if(_board.isEmpty()) {
+			return ResponseEntity.status(404).body("해당 게시글이 존재하지 않습니다.");
+		}
+		
+		if(auth == null || !auth.getName().equals(_board.get().getAuthor().getUsername())) { //auth.getName:현재 로그인한 id
+			return ResponseEntity.status(403).body("해당 게시글에 대한 수정 권한이 없습니다.");
+		}
+		
+		Board oldPost = _board.get(); //기존 게시글
+		
+		oldPost.setTitle(updateBoard.getTitle());
+		oldPost.setContent(updateBoard.getContent());
+		
+		boardRepository.save(oldPost); // 수정한 내용 저장
+
+		return ResponseEntity.ok(_board);
 		
 	}
 	
