@@ -79,12 +79,16 @@ public class AuthController {
 		siteUser.setUsername(siteUserDto.getUsername());
 		//사용자가 입력한 password(dto에 존재)를 entity객체에 set
 		siteUser.setPassword(siteUserDto.getPassword());
+	
+		
 		
 		//사용자 이름(username)이 DB에 이미 존재하는지 확인
 		if(userRepository.findByUsername(siteUser.getUsername()).isPresent()) {
 			//참이면->이미지 해당 username(아이디)가 존재하므로 가입 불가
 			//거짓이면->가입 가능
-			return ResponseEntity.badRequest().body("이미 존재하는 사용자명 입니다."); //가입실패 -> 에러 메시지
+			Map<String, String> error = new HashMap<>();
+			error.put("iderror", "이미 존재하는 사용자명 입니다.");
+			return ResponseEntity.badRequest().body(error); //가입실패 -> 에러 메시지
 		}
 		siteUser.setPassword(passwordEncoder.encode(siteUser.getPassword())); 
 		//비밀번호 암호화해서 엔티티에 다시 넣기

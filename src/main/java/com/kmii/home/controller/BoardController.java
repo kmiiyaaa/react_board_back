@@ -1,12 +1,16 @@
 package com.kmii.home.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,10 +20,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kmii.home.dto.BoardDto;
 import com.kmii.home.entity.Board;
 import com.kmii.home.entity.SiteUser;
 import com.kmii.home.repository.BoardRepository;
 import com.kmii.home.repository.UserRepository;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/board")
@@ -37,19 +44,60 @@ public class BoardController {
          return boardRepository.findAll();
       }
       
-      //게시글 작성
+//      //게시글 작성
+//      @PostMapping
+//      public ResponseEntity<?> write(@RequestBody Board req, Authentication auth) {
+//         
+//         //auth.getName() -> 로그인한 유저 이름
+//         
+//         SiteUser siteUser = userRepository.findByUsername(auth.getName())
+//               .orElseThrow(()->new UsernameNotFoundException("사용자 없음"));
+//         //siteUser->현재 로그인한 유저의 레코드
+//         
+//         Board board = new Board();
+//         board.setTitle(req.getTitle()); //유저가 입력한 글 제목
+//         board.setContent(req.getContent()); //유저가 입력한 글 내용
+//         board.setAuthor(siteUser); //유저 정보
+//         
+//         boardRepository.save(board);
+//         
+//         return ResponseEntity.ok(board);
+//      }
+      
+      //게시글 작성(유효성 체크 -> 제목, 내용은 5글자 이상)
       @PostMapping
-      public ResponseEntity<?> write(@RequestBody Board req, Authentication auth) {
+      public ResponseEntity<?> write(@Valid @RequestBody BoardDto boardDto, 
+    		  BindingResult bindingResult , 
+    		  Authentication auth) {
+    	  
+    	  
+    	  //사용자의 로그인여부 확인
+    	  if(auth == null) { //참이면 로그인 안된것 -> 글쓰기 권한 없음 -> 에러코드 반환
+    		  return ResponseEntity.status(401).body("로그인 후 글쓰기 가능");
+    		  
+    	  }
+    	  
+    	  if(bindingResult.hasErrors()) {   		  
+    		  Map<String, String> errors = new HashMap<>();
+    		  bindingResult.getFieldErrors().forEach(
+    				  err -> {
+    					  errors.put(err.getField(), err.getDefaultMessage());
+    				  }
+    			);  		  
+    		  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);   		  
+    	  }
+    	  
+    	  
+    	  //auth.getName() -> 로그인한 유저 이름
+          SiteUser siteUser = userRepository.findByUsername(auth.getName())
+                .orElseThrow(()->new UsernameNotFoundException("사용자 없음"));
+          //siteUser->현재 로그인한 유저의 레코드
          
-         //auth.getName() -> 로그인한 유저 이름
          
-         SiteUser siteUser = userRepository.findByUsername(auth.getName())
-               .orElseThrow(()->new UsernameNotFoundException("사용자 없음"));
-         //siteUser->현재 로그인한 유저의 레코드
-         
+      
          Board board = new Board();
-         board.setTitle(req.getTitle()); //유저가 입력한 글 제목
-         board.setContent(req.getContent()); //유저가 입력한 글 내용
+         board.setTitle(boardDto.getTitle()); //유저가 입력한 글 제목
+         board.setContent(boardDto.getContent()); //유저가 입력한 글 내용
          board.setAuthor(siteUser); //유저 정보
          
          boardRepository.save(board);
