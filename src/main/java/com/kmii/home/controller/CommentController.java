@@ -115,7 +115,7 @@ public class CommentController {
 		//수정할 댓글 찾아오기
 		Comment comment = commentRepository.findById(commentId).orElseThrow();
 		
-		if(comment.getAuthor().getUsername().equals(auth.getName())) {
+		if(!comment.getAuthor().getUsername().equals(auth.getName())) {
 			return ResponseEntity.status(403).body("수정 권한이 없습니다.");
 		}
 		
@@ -139,7 +139,7 @@ public class CommentController {
 		}
 		
 		//권한설정
-		if(_comment.get().getAuthor().getUsername().equals(auth.getName())) { //참이면 삭제권한 없음
+		if(!_comment.get().getAuthor().getUsername().equals(auth.getName())) { //참이면 삭제권한 없음
 			return ResponseEntity.status(403).body("삭제 권한이 없습니다.");
 		}
 		
