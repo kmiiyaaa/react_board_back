@@ -4,11 +4,16 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,11 +34,19 @@ public class Comment {
 	private LocalDateTime createDate; // 댓글 입력 날짜시간
 	
 	// 로그인한 사용자의 이름 -> 댓글 쓴 사용자
-	@ManyToOne  // 한명이 댓글 여러개쓸 수 있음 
+	//@ManyToOne  // 한명이 댓글 여러개쓸 수 있음 
+	@ManyToOne(fetch = FetchType.LAZY) //불필요한 join방지 -> 성능향상 , manytoone일때 써준다, 지연로딩 해준다
+	@JoinColumn(name="author id") // join되는 테이블의 외래키 이름 지정 가능
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	private SiteUser author; 
 	
+	
+	
 	//댓글에 달릴 원 게시글의 id
-	@ManyToOne // 한개의 게시글에 여러명이 댓글 달 수 있다
+	//@ManyToOne // 한개의 게시글에 여러명이 댓글 달 수 있다
+	@ManyToOne(fetch = FetchType.LAZY) //불필요한 join방지 -> 성능향상 , manytoone일때 써준다, 지연로딩 해준다
+	@JoinColumn(name="board id") // 외래키 이름 지정 가능
+	@JsonIgnore
 	private Board board;
 
 }
