@@ -1,0 +1,91 @@
+/* 게시판 스타일 디자인 */
+
+.container {
+  max-width: 800px;
+  padding: 0 10px;
+  margin: 20px auto;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.board-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.board-table th {
+  border: 1px solid #dddddd;
+  padding: 10px;
+  text-align: center;
+  background-color: beige;
+}
+
+.board-table td {
+  border: 1px solid #dddddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.write-button-container {
+  text-align: right;
+}
+
+.write-button {
+  background-color: burlywood;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.write-hover:hover {
+  background-color: rgb(222, 255, 183);
+  color: white;
+}
+
+.click-title {
+  cursor: pointer;
+  color: rgb(110, 145, 128);
+  font-weight: bold;
+}
+
+.click-title:hover {
+  text-decoration: underline;
+  color: rgb(253, 187, 106);
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.pagination button {
+  padding: 5px 10px;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: rgb(248, 248, 234);
+}
+
+.pagination button.active {
+  padding: 5px 10px;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: rgb(248, 211, 156);
+  font-weight: bold;
+}
+
+/*버튼 중 속성이 disabled인 버튼 속성*/
+.pagination button:disabled {
+  cursor: not-allowed; /* 화살표 포인터 금지표시 변경*/
+  opacity: 0.4; /* 투명도 50% */
+}

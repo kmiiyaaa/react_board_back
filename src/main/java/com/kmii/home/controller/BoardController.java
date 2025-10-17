@@ -156,6 +156,7 @@ public class BoardController {
          Optional<Board> _board = boardRepository.findById(id);
          if(_board.isPresent()) { //참이면 글 조회 성공
             return ResponseEntity.ok(_board.get()); //해당 id글을 반환
+            
          } else { //거짓이면 해당 글 조회 실패
             return ResponseEntity.status(404).body("해당 게시글은 존재하지 않습니다.");
          }
@@ -168,6 +169,8 @@ public class BoardController {
     	  //Authentocation대신 Principal써도된다. Authentocation 선호 - 현재 인증받은 사용자 가져올 수 있다.
     	  // 옛날에 getsession에서 빼서 쓴거대신 auth~ 써서 해주는것 
          Optional<Board> _board = boardRepository.findById(id);
+         
+         //댓글있는 글의 삭제 오류 해결 두번째 방법 -> 
          
          //삭제할 글의 존재 여부 확인
          if (_board.isEmpty()) { //참이면 삭제할 글이 존재하지 않음         
