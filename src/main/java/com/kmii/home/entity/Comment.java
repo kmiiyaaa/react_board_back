@@ -38,6 +38,7 @@ public class Comment {
 	@ManyToOne(fetch = FetchType.LAZY) //불필요한 join방지 -> 성능향상 , manytoone일때 써준다, 지연로딩 해준다
 	@JoinColumn(name="author id") // join되는 테이블의 외래키 이름 지정 가능
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	//@JsonIgnore
 	private SiteUser author; 
 	
 	

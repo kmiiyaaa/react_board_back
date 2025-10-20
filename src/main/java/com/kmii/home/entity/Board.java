@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.kmii.home.entity.SiteUser;
-import com.kmii.home.entity.Comment;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -41,8 +39,8 @@ public class Board {
 	// 댓글있는 게시글 삭제 안됨 후 설정
 	
 	// 게시글(1) : 댓글들(N) -> 글과 연관되어있는 댓글들 삭제설정
-	@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true) 
-	private List<Comment> comments = new ArrayList<>();
-	
+//	@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true) 
+//	private List<Comment> comments = new ArrayList<>();
+//	
 
 }
